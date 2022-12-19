@@ -61,13 +61,20 @@
    Args:
    - `title`: The title text of the dialog
    - `body`: The body text of the dialog
-   - `choices`: A map of options to their descriptions.
+   - `choices`: A map of options to their descriptions. 
+   
+   By default, `choices` is assumed to be a map of keywords to strings, and returns a keyword, but you can customize this behavior with 
+   optional keyword arguments:
+   - `:in-fn`: a function that will be applied to convert each key to a string for use by `dialog`
+   - `:out-fn`: a function that will be applied to the string option selected and returned by `dialog`, to convert it back into a 
+     Clojure value
    
    Returns: keyword"
-  [title body choices]
+  [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (->> choices
-       (mapcat (fn [[k v]] [(name k) (str v)]))
+       (mapcat (fn [[k v]] [(in-fn k) (str v)]))
        (apply dialog "--menu" title body
               (count choices))
        :err
-       keyword))
+       out-fn))
+
