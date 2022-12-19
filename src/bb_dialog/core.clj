@@ -32,6 +32,19 @@
            args)
     (throw (Exception. "bb-dialog was unable to locate a working version of dialog! Please install it in the PATH."))))
 
+(defn message
+  "Calls a message dialog (`dialog --msgbox`), which simply presents some text that can be clicked past with OK or the enter key.
+   The message can be interrupted also with ESC, and so the return value is a boolean that indicates whether or not the prompt
+   returned a zero exit code as from OK/enter.
+   
+   Args:
+   - `title`: The title text of the dialog
+   - `body`: The body text of the dialog
+   
+   Returns: boolean"
+  [title body]
+  (-> (dialog "--msgbox" title body) :exit zero?))
+
 (defn confirm 
   "Calls a confirmation dialog (`dialog --yesno`), and returns a boolean depending on whether the user agreed.
    
