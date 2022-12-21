@@ -57,7 +57,8 @@
   (-> (dialog "--yesno" title body) :exit zero?))
 
 (defn pause
-  "Calls a confirmation dialog with a timeout (`dialog --pause`).
+  "Calls a confirmation dialog with a timeout (`dialog --pause`). Unless interrupted by the user selecting cancel or hitting ESC,
+   the dialog will automatically end with a `true` result after `timeout` seconds.
    
    Args:
    - `title`: The title text of the dialog
