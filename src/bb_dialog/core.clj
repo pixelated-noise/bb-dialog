@@ -1,6 +1,7 @@
 (ns bb-dialog.core
   (:require [babashka.process :refer [shell]]
-            [babashka.fs :refer [which]]))
+            [babashka.fs :refer [which]]
+            [clojure.string :as str]))
 
 (def ^:dynamic *dialog-command*
   "A var which attempts to contain the correct version of `dialog` for the system. Given that this could potentially fail,
@@ -95,7 +96,7 @@
    - `:out-fn`: a function that will be applied to the string option selected and returned by `dialog`, to convert it back into a 
      Clojure value
    
-   Returns: keyword"
+   Returns: keyword (or result of `out-fn`)"
   [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (->> choices
        (mapcat (fn [[k v]] [(in-fn k) (str v)]))
@@ -104,3 +105,22 @@
        :err
        out-fn))
 
+(defn checklist
+  "Calls a `--checklist` dialog, and returns the selected option as a keyword.
+   
+   Args:
+   - `title`: The title text of the dialog
+   - `body`: The body text of the dialog
+   - `choices`: A list of options. Each item in the list should be a vector of 3 elements: the choice value itself, a string description, 
+     and a boolean indicating whether the option is toggled or not.
+     By default, the values are assumed to be keywords, and the function returns a seq of keywords, but you can customize this behavior with 
+     optional keyword arguments:
+   - `:in-fn`: a function that will be applied to convert each key to a string for use by `dialog`
+   - `:out-fn`: a function that will be applied to each string option selected and returned by `dialog`, to convert it back into a 
+     Clojure value
+   
+   Returns: seq of keywords (or results of `out-fn`)"
+  [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
+  (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
+        result (apply dialog "--checklist" title body (count choices) as-list)]
+    (map out-fn (str/split (:err result) #" "))))
