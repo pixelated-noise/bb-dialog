@@ -56,6 +56,18 @@
   [title body]
   (-> (dialog "--yesno" title body) :exit zero?))
 
+(defn pause
+  "Calls a confirmation dialog with a timeout (`dialog --pause`).
+   
+   Args:
+   - `title`: The title text of the dialog
+   - `body`: The body text of the dialog
+   - `timeout`: The number of seconds the dialog should wait before automatically exiting.
+   
+   Returns: boolean"
+  [title body timeout]
+  (-> (dialog "--pause" title body timeout) :exit zero?))
+
 (defn input 
   "Calls an `--inputbox` dialog, and returns the user input as a string.
    
