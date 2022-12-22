@@ -31,8 +31,14 @@
       :in-fn str
       :out-fn #(Integer/parseInt %))
 
-(checklist "Options"
+#_(checklist "Options"
            "Choose options"
            [[:a "Option a" false]
             [:b "Option b" true]
             [:c "Option c" false]])
+
+(radiolist "Options"
+           "Choose options"
+           [[:a "Option a" false]
+            [:b "Option b" true]
+            [:c "Option c" true]])

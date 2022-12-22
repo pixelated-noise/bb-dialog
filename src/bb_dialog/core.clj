@@ -106,7 +106,7 @@
        out-fn))
 
 (defn checklist
-  "Calls a `--checklist` dialog, and returns the selected option as a keyword.
+  "Calls a `--checklist` dialog, and returns the selected options as a seq of options.
    
    Args:
    - `title`: The title text of the dialog
@@ -124,3 +124,27 @@
   (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
         result (apply dialog "--checklist" title body (count choices) as-list)]
     (map out-fn (str/split (:err result) #" "))))
+
+(defn radiolist
+  "Calls a `--radiolist` dialog, and returns the selected option as a keyword.
+   
+   Args:
+   - `title`: The title text of the dialog
+   - `body`: The body text of the dialog
+   - `choices`: A list of options. Each item in the list should be a vector of 3 elements: the choice value itself, a string description, 
+     and a boolean indicating whether the option is toggled or not. Note that since only one choice can be selected at the same time, 
+     `dialog` will ignore the toggled state of all but the first toggled item in the list.
+     
+     By default, the values are assumed to be keywords, and the function returns a seq of keywords, but you can customize this behavior with 
+     optional keyword arguments:
+   - `:in-fn`: a function that will be applied to convert each key to a string for use by `dialog`
+   - `:out-fn`: a function that will be applied to each string option selected and returned by `dialog`, to convert it back into a 
+     Clojure value
+   
+   Returns: keyword (or results of `out-fn`)"
+  [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
+  (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
+        result (apply dialog "--radiolist" title body (count choices) as-list)]
+    (-> result
+        :err
+        out-fn)))
