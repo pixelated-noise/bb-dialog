@@ -1,8 +1,9 @@
 #! /usr/bin/env bb
 
-(require '[bb-dialog.core :refer :all])
+(require '[bb-dialog.core :refer :all]
+         '[clojure.string :as str])
 
-(def game-state (atom {:name "Default"
+(def game-state (atom {:cname "Default"
                        :class :hero
                        :items []}))
 
@@ -17,20 +18,30 @@
           soon he will come for the little panda village too. You
           have been chosen to go forth and investigate.")
 
-(swap! game-state assoc :name (input "What is your name, little one?"
-                                     "Enter your name below."))
+(loop []
+  (swap! game-state assoc :cname (input "What is your name, little one?"
+                                       "Enter your name below."))
 
-(swap! game-state assoc :class (radiolist "What is your class?"
-                                          "What has your panda trained as? 
+  (swap! game-state assoc :class (radiolist "What is your class?"
+                                            "What has your panda trained as? 
                                            Choose below."
-                                          [[:WAR "Warrior" true]
-                                           [:MGE "Mage" false]
-                                           [:ROG "Rogue" false]]))
+                                            [[:WAR "Warrior" true]
+                                             [:MGE "Mage" false]
+                                             [:ROG "Rogue" false]]))
 
-(case (:class @game-state)
-  :WAR (add-item! :sword)
-  :MGE (add-item! :staff)
-  :ROG (add-item! :knife))
+  (case (:class @game-state)
+    :WAR (add-item! :sword)
+    :MGE (add-item! :staff)
+    :ROG (add-item! :knife))
 
-(add-item! :potion)
+  (add-item! :potion)
+  
+  (when-not (confirm "Are you happy with these choices?"
+                     (str/join "\n"
+                               (let [{:keys [cname class items]} @game-state]
+                                 [(str "Name: " cname)
+                                  (str "Class: " (name class))
+                                  (str "Items: " (str/join ", " (map name items)))])))
+    (swap! game-state assoc :items [])
+    (recur)))
 
