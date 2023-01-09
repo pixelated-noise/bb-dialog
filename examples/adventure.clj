@@ -10,7 +10,7 @@
 (defn add-item! [item]
   (swap! game-state update :items conj item))
 
-(message "The adventure begins"
+(message "Our story"
          "You are a little panda who lives in a little panda village
           in a little bamboo grove in the highlands. It is a scary
           time for the little village. The dark lord's armies have 
@@ -44,4 +44,19 @@
                                   (str "Items: " (str/join ", " (map name items)))])))
     (swap! game-state assoc :items [])
     (recur)))
+
+(def choice1
+  (menu "The adventure begins"
+        (str "Alright, " (:cname @game-state) ", time to set off."
+             "You make your way down the path through the grove and reach"
+             "a fork in the road. Which way will you go?")
+        {:W "West"
+         :E "East"}))
+
+(when (= choice1 :W)
+  (message "You died!"
+           (str "The path west from the grove leads down a wet and slippery slope, and you lose your footing "
+                "and slide down the hill, only to find the bridge is out! The little panda tumbles to their doom "
+                "in the river below, never to be seen again."))
+  (System/exit 0))
 
