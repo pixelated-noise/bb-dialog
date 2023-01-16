@@ -7,7 +7,7 @@ This allows for a smoother way of adding simple TUI dialogs to your Babashka scr
 ## Requirements
 
 You will need some version of either `dialog`, `whiptail`, or `Xdialog` installed. `dialog` or `whiptail` may already be installed on most 
-Linux systems, however on OS X you will need to install `dialog` from brew. 
+Linux systems, however on OS X you will need to install `dialog` from brew. There is also a Windows port of `dialog` [here](https://andrear.altervista.org/home/cdialog.php).
 
 ## Usage
 
