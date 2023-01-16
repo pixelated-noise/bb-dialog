@@ -1,1 +1,9 @@
-{:paths ["src"]}
+{:paths ["src"]
+ :deps {io.github.borkdude/quickdoc {:git/sha "1e810ddd08ee724ff5736530a35a989d0ecdc9de"}}
+ :tasks {quickdoc {:doc "Invoke quickdoc"
+                   :requires ([quickdoc.api :as api])
+                   :task (api/quickdoc {:git/branch "main"
+                                        :github/repo "https://github.com/pixelated-noise/bb-dialog"
+                                        :toc true
+                                        :var-links true
+                                        :outfile "docs/API.md"})}}}
