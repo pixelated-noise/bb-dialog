@@ -4,6 +4,11 @@ A simple wrapper library for working with [dialog](https://invisible-island.net/
 
 This allows for a smoother way of adding simple TUI dialogs to your Babashka scripts on supported operating systems.
 
+## Requirements
+
+You will need some version of either `dialog`, `whiptail`, or `Xdialog` installed. `dialog` or `whiptail` may already be installed on most 
+Linux systems, however on OS X you will need to install `dialog` from brew. 
+
 ## Usage
 
 For the time being, you should be able to employ bb-dialog as a git dependency in your `bb.edn`, and releases are tagged for ease of use:
