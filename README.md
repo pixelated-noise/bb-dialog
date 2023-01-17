@@ -34,3 +34,9 @@ See [quickdocs](docs/API.md).
 - [ ] Directory select (`--dselect`)
 - [ ] File select (`--fselect`)
 - [ ] Time picker (`--timebox`)
+
+## Legal
+
+Copyright (c) 2023 Pixelated Noise Ltd
+
+Distributed under the Eclipse Public License version 2.0 or later.
