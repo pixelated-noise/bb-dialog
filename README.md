@@ -6,7 +6,7 @@ This allows for a smoother way of adding simple TUI dialogs to your Babashka scr
 
 ## Requirements
 
-You will need some version of either `dialog`, `whiptail`, or `Xdialog` installed. `dialog` or `whiptail` may already be installed on most 
+You will need some version of either `dialog`, `whiptail`, or `Xdialog` installed. `dialog` or `whiptail` may already be installed on most
 Linux systems, however on OS X you will need to install `dialog` from brew. There is also a Windows port of `dialog` [here](https://andrear.altervista.org/home/cdialog.php).
 
 ## Usage
@@ -14,7 +14,8 @@ Linux systems, however on OS X you will need to install `dialog` from brew. Ther
 For the time being, you should be able to employ bb-dialog as a git dependency in your `bb.edn`, and releases are tagged for ease of use:
 
 ```
-{:deps {com.github.pixelated-noise/bb-dialog {:git/tag "v0.1"}}}
+{:deps {com.github.pixelated-noise/bb-dialog {:git/tag "v0.2"
+                                              :git/sha "66cd35803ce17c3c224348c408efe38a2acde949}}}
 ```
 
 ## API docs
