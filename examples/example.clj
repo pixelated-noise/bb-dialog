@@ -4,41 +4,58 @@
 (require '[babashka.fs :refer [which]])
 (require '[bb-dialog.core :refer :all])
 
-#_(message "Important!"
-         "Pandas are cute!")
+;; comment out the various forms below at will
 
-#_(confirm "Important Query!"
-         "Are cats soft?!")
+(comment
+ (println
+  (message "Important!"
+           "Pandas are cute!")))
 
-#_(pause "Are you sure you want to do this?"
-       "This adorable puppy will be sent\n to a farm!"
-       10)
+(comment
+  (println
+   (confirm "Important Query!"
+            "Are cats soft?!")))
 
-#_(input "CAT NAME"
-       "WHAT IS CAT NAME TELL ME NOW")
+(comment
+  (println
+   (pause "Are you sure you want to do this?"
+          "This adorable puppy will be sent\n to a farm!"
+          10)))
 
-#_(menu "PIE CHOOSER"
-      "Which is best pie?"
-      {:apple "Apple"
-       :pumpkin "Pumpkin"
-       :cheese "Cheese"})
+(comment
+  (println
+   (input "CAT NAME"
+          "WHAT IS CAT NAME TELL ME NOW")))
 
-#_(menu "Zip Code"
-      "Select the correct zip code for your area"
-      {60605 "Chicago"
-       10005 "New York City"
-       90028 "Hollywood"}
-      :in-fn str
-      :out-fn #(Integer/parseInt %))
+(comment
+  (println
+   (menu "PIE CHOOSER"
+         "Which is best pie?"
+         {:apple "Apple"
+          :pumpkin "Pumpkin"
+          :cheese "Cheese"})))
 
-#_(checklist "Options"
-           "Choose options"
-           [[:a "Option a" false]
-            [:b "Option b" true]
-            [:c "Option c" false]])
+(comment
+  (println
+   (menu "Zip Code"
+         "Select the correct zip code for your area"
+         {60605 "Chicago"
+          10005 "New York City"
+          90028 "Hollywood"}
+         :in-fn str
+         :out-fn #(Integer/parseInt %))))
 
-(radiolist "Options"
-           "Choose options"
-           [[:a "Option a" false]
-            [:b "Option b" true]
-            [:c "Option c" true]])
+(comment
+  (println
+   (checklist "Options"
+              "Choose options"
+              [[:a "Option a" false]
+               [:b "Option b" true]
+               [:c "Option c" false]])))
+
+(println
+ (radiolist "Options"
+            "Choose options"
+            [[:a "Option a" false]
+             [:b "Option b" true]
+             [:c "Option c" true]]))

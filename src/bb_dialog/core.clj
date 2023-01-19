@@ -124,7 +124,7 @@
    Returns: seq of keywords (or results of `out-fn`), or nil if the user selects cancel or selects no choices"
   [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
-        result (apply dialog "--checklist" title body (count choices) as-list)]
+        result  (apply dialog "--checklist" title body (count choices) as-list)]
     (when-let [err (not-empty (:err result))]
       (map out-fn (str/split err #" ")))))
 
@@ -147,7 +147,7 @@
    Returns: keyword (or results of `out-fn`), or nil if the user selects cancel"
   [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
-        result (apply dialog "--radiolist" title body (count choices) as-list)]
+        result  (apply dialog "--radiolist" title body (count choices) as-list)]
     (some-> result
             :err
             not-empty
