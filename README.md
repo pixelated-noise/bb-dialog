@@ -22,6 +22,8 @@ For the time being, you should be able to employ bb-dialog as a git dependency i
 
 See [quickdocs](docs/API.md).
 
+Also see [the announcement blog post](https://www.pixelated-noise.com/blog/2023/01/20/bb-dialog-announcement/index.html).
+
 ## Options supported (current and planned)
 
 - [x] Checklist (`--checklist`)
