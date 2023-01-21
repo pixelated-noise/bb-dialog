@@ -15,7 +15,7 @@ For the time being, you should be able to employ bb-dialog as a git dependency i
 
 ```
 {:deps {com.github.pixelated-noise/bb-dialog {:git/tag "v0.2"
-                                              :git/sha "66cd35803ce17c3c224348c408efe38a2acde949}}}
+                                              :git/sha "66cd35803ce17c3c224348c408efe38a2acde949"}}}
 ```
 
 ## API docs
