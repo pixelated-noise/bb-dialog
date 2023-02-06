@@ -1,7 +1,8 @@
 (ns bb-dialog.core
   (:require [babashka.process :refer [shell]]
             [babashka.fs :refer [which]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.zip :as z]))
 
 (def ^:dynamic *dialog-command*
   "A var which attempts to contain the correct version of `dialog` for the system. Given that this could potentially fail,
@@ -26,11 +27,13 @@
    and `:err` keys, which will contain the return values from the call to `dialog`."
   [type title body & args]
   (if-let [diag *dialog-command*]
-    (apply shell
-           {:continue true
-            :err :string}
-           diag "--clear" "--title" title type body 0 0
-           args)
+    (do
+      (prn (concat [diag "--clear" "--title" title type body 0 0] args))
+      (apply shell
+             {:continue true
+              :err :string}
+             diag "--clear" "--title" title type body 0 0
+             args))
     (throw (Exception. "bb-dialog was unable to locate a working version of dialog! Please install it in the PATH."))))
 
 (defn message
@@ -152,3 +155,82 @@
             :err
             not-empty
             out-fn)))
+
+;; dialog --clear --fselect ~/ 50 10
+;; dialog --clear --gauge hello 10 100 32
+;; dialog --timebox hello 0 0
+
+;; dialog --treeview hello 0 0 0 a alpha on 0 b beta on 1 b beta on 1 g gamma on 0
+
+(def tt
+  [[:a "alpha" :on
+    [:b "beta" :off]
+    [:c "gamma" :on
+     [:c1 "gamma1" :on]
+     [:c2 "gamma2" :on]]
+    [:d "delta" :on
+     [:d1 "delta1" :on]
+     [:d2 "delta2" :on]
+     [:d3 "delta3" :on]]]
+   [:z "zed" :on]])
+
+(def tt2
+  [:a "alpha"
+   [:b "beta"]
+   [:c "gamma" :on
+    [:c1 "gamma1"]
+    [:c2 "gamma2"]]
+   [:d "delta"
+    [:d1 "delta1"]
+    [:d2 "delta2"]
+    [:d3 "delta3"]]])
+
+(defn- tv-branch? [x]
+  (and (vector? x)
+       (keyword? (first x))))
+
+(defn- tv-depth [loc]
+  (count (filter tv-branch? (z/path loc))))
+
+
+(defn- tv-flatten-tree [tree]
+  (loop [res   []
+         loc   (z/vector-zip tree)]
+    (let [n (z/node loc)]
+      (cond (z/end? loc)   res
+            (tv-branch? n) (let [[tag item status] n]
+                             (recur (apply conj res
+                                           (if (keyword? status)
+                                             [(name tag) item (name status) (str (tv-depth loc))]
+                                             [(name tag) item "off" (str (tv-depth loc))]))
+                                    (z/next loc)))
+            :else          (recur res (z/next loc))))))
+
+(defn treeview
+  "Calls a `--treeview` dialog, and returns the selected option as a keyword.
+
+  Args:
+  - `body`: The text shown in the dialog
+  - `tree`: A structure of nested vectors describing the available options
+
+  The tree should look like so:
+
+  ```
+  [:a \"alpha\"
+   [:b \"beta\"]
+   [:c \"gamma\" :on
+    [:c1 \"gamma1\"]
+    [:c2 \"gamma2\"]]
+   [:d \"delta\" :off
+    [:d1 \"delta1\"]
+    [:d2 \"delta2\"]
+    [:d3 \"delta3\"]]]
+  ```
+
+  The `:on` keyword defines which option is preselected - only the first
+  `:on` has any effect. The `:on`/`:off` keywords are optional (`:off` is
+  implied if absent).
+
+  Returns: keyword, or nil if the user selects cancel"
+  [body tree]
+  (some-> (apply dialog "--treeview" nil body (cons 0 (tv-flatten-tree tree))) :err not-empty keyword))

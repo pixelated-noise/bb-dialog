@@ -33,6 +33,7 @@ Also see [the announcement blog post](https://www.pixelated-noise.com/blog/2023/
 - [x] Message box (`--msgbox`)
 - [x] Pause/timed dialog (`--pause`)
 - [x] Radio list (`--radiolist`)
+- [x] Tree view (`--treeview`)
 - [ ] Calendar (`--calendar`)
 - [ ] Directory select (`--dselect`)
 - [ ] File select (`--fselect`)
