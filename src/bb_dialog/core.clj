@@ -175,15 +175,18 @@
    [:z "zed" :on]])
 
 (def tt2
-  [:a "alpha"
-   [:b "beta"]
-   [:c "gamma" :on
-    [:c1 "gamma1"]
-    [:c2 "gamma2"]]
-   [:d "delta"
-    [:d1 "delta1"]
-    [:d2 "delta2"]
-    [:d3 "delta3"]]])
+  [[:a "alpha"
+    [:b "beta"]
+    [:c "gamma" :on
+     [:c1 "gamma1"]
+     [:c2 "gamma2"]]
+    [:d "delta"
+     [:d1 "delta1"]
+     [:d2 "delta2"]
+     [:d3 "delta3"]]]
+   [:e "epsilon"
+    [:z "zeta" :on]
+    [:h "eta" :on]]])
 
 (defn- tv-branch? [x]
   (and (vector? x)
@@ -205,6 +208,21 @@
                                              [(name tag) item "off" (str (tv-depth loc))]))
                                     (z/next loc)))
             :else          (recur res (z/next loc))))))
+
+(defn- parse-tree [depth tree]
+  (let [[[tag item status] children] (split-with (complement vector?) tree)]
+    {:tag      tag
+     :item     item
+     :status   (or status :off)
+     :depth    depth
+     ;; don't increment depth for tagless nodes, containing sibling subtrees
+     :children (map (partial parse-tree (+ depth (if tag 1 0))) children)}))
+
+(defn- marshal-tree [{:keys [tag item status depth children]}]
+  (cond->> (mapcat marshal-tree children)
+    tag (concat [(name tag) item (name status) (str depth)])))
+
+(defn- tv-flatten-tree-2 [tree] (marshal-tree (parse-tree 0 tree)))
 
 (defn treeview
   "Calls a `--treeview` dialog, and returns the selected option as a keyword.
