@@ -13,9 +13,10 @@ Linux systems, however on OS X you will need to install `dialog` from brew. Ther
 
 For the time being, you should be able to employ bb-dialog as a git dependency in your `bb.edn`, and releases are tagged for ease of use:
 
-```
-{:deps {com.github.pixelated-noise/bb-dialog {:git/tag "v0.2"
-                                              :git/sha "66cd35803ce17c3c224348c408efe38a2acde949"}}}
+```clojure
+{:deps {com.github.pixelated-noise/bb-dialog
+        {:git/tag "v0.3"
+         :git/sha "0d23383812dd6e199661c6f276738c974a53d65d"}}}
 ```
 
 ## API docs
