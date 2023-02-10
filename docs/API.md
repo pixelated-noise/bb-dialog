@@ -9,6 +9,7 @@
     -  [`message`](#bb-dialog.core/message) - Calls a message dialog (<code>dialog --msgbox</code>), which simply presents some text that can be clicked past with OK or the enter key.
     -  [`pause`](#bb-dialog.core/pause) - Calls a confirmation dialog with a timeout (<code>dialog --pause</code>).
     -  [`radiolist`](#bb-dialog.core/radiolist) - Calls a <code>--radiolist</code> dialog, and returns the selected option as a keyword.
+    -  [`treeview`](#bb-dialog.core/treeview) - Calls a <code>--treeview</code> dialog, and returns the selected option as a keyword.
 
 -----
 # <a name="bb-dialog.core">bb-dialog.core</a>
@@ -18,13 +19,13 @@
 
 
 
-## <a name="bb-dialog.core/*dialog-command*">`*dialog-command*`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L6-L13)
+## <a name="bb-dialog.core/*dialog-command*">`*dialog-command*`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L7-L14)
 <a name="bb-dialog.core/*dialog-command*"></a>
 
 A var which attempts to contain the correct version of [`dialog`](#bb-dialog.core/dialog) for the system. Given that this could potentially fail,
    and can't necessarily foresee all possibilities, the var is dynamic to allow rebinding by the end user.
 
-## <a name="bb-dialog.core/checklist">`checklist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L110-L129)
+## <a name="bb-dialog.core/checklist">`checklist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L111-L130)
 <a name="bb-dialog.core/checklist"></a>
 ``` clojure
 
@@ -47,7 +48,7 @@ Calls a `--checklist` dialog, and returns the selected options as a seq of optio
 
    Returns: seq of keywords (or results of `out-fn`), or nil if the user selects cancel or selects no choices
 
-## <a name="bb-dialog.core/confirm">`confirm`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L49-L58)
+## <a name="bb-dialog.core/confirm">`confirm`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L50-L59)
 <a name="bb-dialog.core/confirm"></a>
 ``` clojure
 
@@ -63,7 +64,7 @@ Calls a confirmation dialog (`dialog --yesno`), and returns a boolean depending 
 
    Returns: boolean
 
-## <a name="bb-dialog.core/dialog">`dialog`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L15-L34)
+## <a name="bb-dialog.core/dialog">`dialog`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L16-L35)
 <a name="bb-dialog.core/dialog"></a>
 ``` clojure
 
@@ -83,7 +84,7 @@ The base function wrapper for calling out to the system's version of [[`dialog`]
    A process map as per [`babashka.process`](https://github.com/babashka/process/blob/master/API.md#process-). Of useful note are the `:exit`
    and `:err` keys, which will contain the return values from the call to [[`dialog`](#bb-dialog.core/dialog)](#bb-dialog.core/dialog).
 
-## <a name="bb-dialog.core/input">`input`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L73-L84)
+## <a name="bb-dialog.core/input">`input`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L74-L85)
 <a name="bb-dialog.core/input"></a>
 ``` clojure
 
@@ -99,7 +100,7 @@ Calls an `--inputbox` dialog, and returns the user input as a string.
 
    Returns: string, or nil if the user selects cancel
 
-## <a name="bb-dialog.core/menu">`menu`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L86-L108)
+## <a name="bb-dialog.core/menu">`menu`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L87-L109)
 <a name="bb-dialog.core/menu"></a>
 ``` clojure
 
@@ -122,7 +123,7 @@ Calls a `--menu` dialog, and returns the selected option as a keyword.
 
    Returns: keyword (or result of `out-fn`), or nil if the user selects cancel
 
-## <a name="bb-dialog.core/message">`message`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L36-L47)
+## <a name="bb-dialog.core/message">`message`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L37-L48)
 <a name="bb-dialog.core/message"></a>
 ``` clojure
 
@@ -140,7 +141,7 @@ Calls a message dialog (`dialog --msgbox`), which simply presents some text that
 
    Returns: boolean
 
-## <a name="bb-dialog.core/pause">`pause`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L60-L71)
+## <a name="bb-dialog.core/pause">`pause`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L61-L72)
 <a name="bb-dialog.core/pause"></a>
 ``` clojure
 
@@ -158,7 +159,7 @@ Calls a confirmation dialog with a timeout (`dialog --pause`). Unless interrupte
 
    Returns: boolean
 
-## <a name="bb-dialog.core/radiolist">`radiolist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L131-L154)
+## <a name="bb-dialog.core/radiolist">`radiolist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L132-L158)
 <a name="bb-dialog.core/radiolist"></a>
 ``` clojure
 
@@ -171,9 +172,12 @@ Calls a `--radiolist` dialog, and returns the selected option as a keyword.
    Args:
    - `title`: The title text of the dialog
    - `body`: The body text of the dialog
-   - `choices`: A list of options. Each item in the list should be a vector of 3 elements: the choice value itself, a string description,
-     and a boolean indicating whether the option is toggled or not. Note that since only one choice can be selected at the same time,
-     [[[`dialog`](#bb-dialog.core/dialog)](#bb-dialog.core/dialog)](#bb-dialog.core/dialog) will ignore the toggled state of all but the first toggled item in the list.
+
+   - `choices`: A list of options. Each item in the list should be a vector of 3
+      elements: the choice value itself, a string description, and a boolean
+      indicating whether the option is toggled or not. Note that since only one
+      choice can be selected at the same time, [[[`dialog`](#bb-dialog.core/dialog)](#bb-dialog.core/dialog)](#bb-dialog.core/dialog) will ignore the toggled
+      state of all but the first toggled item in the list.
 
      By default, the values are assumed to be keywords, and the function returns a seq of keywords, but you can customize this behavior with
      optional keyword arguments:
@@ -182,3 +186,65 @@ Calls a `--radiolist` dialog, and returns the selected option as a keyword.
      Clojure value
 
    Returns: keyword (or results of `out-fn`), or nil if the user selects cancel
+
+## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L177-L233)
+<a name="bb-dialog.core/treeview"></a>
+``` clojure
+
+(treeview body tree & {:keys [in-fn out-fn], :or {in-fn name, out-fn keyword}})
+```
+
+
+Calls a `--treeview` dialog, and returns the selected option as a keyword.
+
+  Args:
+  - `body`: The text shown in the dialog
+  - `tree`: A structure of nested vectors describing the available options
+
+  The tree should look like so:
+
+  ```
+  [:a "alpha"
+   [:b "beta"]
+   [:c "gamma" :on
+    [:c1 "gamma1"]
+    [:c2 "gamma2"]]
+   [:d "delta" :off
+    [:d1 "delta1"]
+    [:d2 "delta2"]
+    [:d3 "delta3"]]]
+  ```
+
+  The `:on` keyword defines which option is preselected - only the first
+  `:on` has any effect. The `:on`/`:off` keywords are optional (`:off` is
+  implied if absent).
+
+  By default, the tags of the nodes of the tree are assumed to be keywords, and
+  the function returns the selected keyword, but you can customize this behavior
+  with optional keyword arguments:
+
+   - `:in-fn`: a function that will be applied to convert each tag to a string
+     for use by [[`dialog`](#bb-dialog.core/dialog)](#bb-dialog.core/dialog)
+
+   - `:out-fn`: a function that will be applied to the selected string option
+     returned by [[`dialog`](#bb-dialog.core/dialog)](#bb-dialog.core/dialog), to convert it back into a Clojure value
+
+  Here's an example of how to use integers as tags:
+
+  ```
+  (treeview
+   "Pick one"
+   [[1 "alpha"
+     [11 "beta"]
+     [12 "gamma" :on
+      [121 "gamma1"]
+      [122 "gamma2"]]
+     [13 "delta"
+      [131 "delta1"]
+      [132 "delta2"]
+      [133 "delta3"]]]]
+   :in-fn str
+   :out-fn #(Integer/parseInt %))
+  ```
+
+  Returns: keyword (or results of `out-fn`), or nil if the user selects cancel
