@@ -13,7 +13,7 @@
     (which "Xdialog") "Xdialog"
     :else nil))
 
-(defn dialog
+(defn command
   "The base function wrapper for calling out to the system's version of `dialog`.
 
    Args:
@@ -45,7 +45,7 @@
 
    Returns: boolean"
   [title body]
-  (-> (dialog "--msgbox" title body) :exit zero?))
+  (-> (command "--msgbox" title body) :exit zero?))
 
 (defn confirm
   "Calls a confirmation dialog (`dialog --yesno`), and returns a boolean depending on whether the user agreed.
@@ -56,7 +56,7 @@
 
    Returns: boolean"
   [title body]
-  (-> (dialog "--yesno" title body) :exit zero?))
+  (-> (command "--yesno" title body) :exit zero?))
 
 (defn pause
   "Calls a confirmation dialog with a timeout (`dialog --pause`). Unless interrupted by the user selecting cancel or hitting ESC,
@@ -69,7 +69,7 @@
 
    Returns: boolean"
   [title body timeout]
-  (-> (dialog "--pause" title body timeout) :exit zero?))
+  (-> (command "--pause" title body timeout) :exit zero?))
 
 (defn input
   "Calls an `--inputbox` dialog, and returns the user input as a string.
@@ -80,7 +80,7 @@
 
    Returns: string, or nil if the user selects cancel"
   [title body]
-  (-> (dialog "--inputbox" title body)
+  (-> (command "--inputbox" title body)
       :err
       not-empty))
 
@@ -102,7 +102,7 @@
   [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (some->> choices
            (mapcat (fn [[k v]] [(in-fn k) (str v)]))
-           (apply dialog "--menu" title body
+           (apply command "--menu" title body
                   (count choices))
            :err
            not-empty
@@ -125,7 +125,7 @@
    Returns: seq of keywords (or results of `out-fn`), or nil if the user selects cancel or selects no choices"
   [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
-        result  (apply dialog "--checklist" title body (count choices) as-list)]
+        result  (apply command "--checklist" title body (count choices) as-list)]
     (when-let [err (not-empty (:err result))]
       (map out-fn (str/split err #" ")))))
 
@@ -151,7 +151,7 @@
    Returns: keyword (or results of `out-fn`), or nil if the user selects cancel"
   [title body choices & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
-        result  (apply dialog "--radiolist" title body (count choices) as-list)]
+        result  (apply command "--radiolist" title body (count choices) as-list)]
     (some-> result
             :err
             not-empty
@@ -231,4 +231,4 @@
   Returns: keyword (or results of `out-fn`), or nil if the user selects cancel"
   [body tree & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
   (prn (tv-flatten-tree tree in-fn) in-fn out-fn)
-  (some-> (apply dialog "--treeview" nil body (cons 0 (tv-flatten-tree tree in-fn))) :err not-empty out-fn))
+  (some-> (apply command "--treeview" nil body (cons 0 (tv-flatten-tree tree in-fn))) :err not-empty out-fn))
