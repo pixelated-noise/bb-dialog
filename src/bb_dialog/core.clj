@@ -180,6 +180,7 @@
   Args:
   - `body`: The text shown in the dialog
   - `tree`: A structure of nested vectors describing the available options
+  - `:in-fn` and `:out-fn` see below
 
   The tree should look like so:
 

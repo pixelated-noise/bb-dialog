@@ -187,7 +187,7 @@ Calls a `--radiolist` dialog, and returns the selected option as a keyword.
 
    Returns: keyword (or results of `out-fn`), or nil if the user selects cancel
 
-## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L177-L233)
+## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L177-L234)
 <a name="bb-dialog.core/treeview"></a>
 ``` clojure
 
@@ -200,6 +200,7 @@ Calls a `--treeview` dialog, and returns the selected option as a keyword.
   Args:
   - `body`: The text shown in the dialog
   - `tree`: A structure of nested vectors describing the available options
+  - `:in-fn` and `:out-fn` see below
 
   The tree should look like so:
 
