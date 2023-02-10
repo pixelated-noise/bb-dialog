@@ -229,10 +229,9 @@
    the function returns the selected keyword, but you can customize this behavior
    with optional keyword arguments:
 
-    - `:in-fn`: a function that will be applied to convert each tag to a string
+   - `:in-fn`: a function that will be applied to convert each tag to a string
       for use by `dialog`
-
-    - `:out-fn`: a function that will be applied to the selected string option
+   - `:out-fn`: a function that will be applied to the selected string option
       returned by `dialog`, to convert it back into a Clojure value
 
    Here's an example of how to use integers as tags:

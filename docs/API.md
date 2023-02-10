@@ -209,7 +209,7 @@ Calls a `--radiolist` dialog, and returns the selected option as a keyword.
 
    Returns: keyword (or results of `out-fn`), or nil if the user selects cancel.
 
-## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L200-L257)
+## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L200-L256)
 <a name="bb-dialog.core/treeview"></a>
 ``` clojure
 
@@ -248,10 +248,9 @@ Calls a `--treeview` dialog, and returns the selected option as a keyword.
    the function returns the selected keyword, but you can customize this behavior
    with optional keyword arguments:
 
-    - `:in-fn`: a function that will be applied to convert each tag to a string
+   - `:in-fn`: a function that will be applied to convert each tag to a string
       for use by `dialog`
-
-    - `:out-fn`: a function that will be applied to the selected string option
+   - `:out-fn`: a function that will be applied to the selected string option
       returned by `dialog`, to convert it back into a Clojure value
 
    Here's an example of how to use integers as tags:
