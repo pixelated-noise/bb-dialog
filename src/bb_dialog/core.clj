@@ -27,13 +27,11 @@
    and `:err` keys, which will contain the return values from the call to `dialog`."
   [type title body & args]
   (if-let [diag *dialog-command*]
-    (do
-      (prn (concat [diag "--clear" "--title" title type body 0 0] args))
-      (apply shell
-             {:continue true
-              :err :string}
-             diag "--clear" "--title" title type body 0 0
-             args))
+    (apply shell
+           {:continue true
+            :err :string}
+           diag "--clear" "--title" title type body 0 0
+           args)
     (throw (Exception. "bb-dialog was unable to locate a working version of dialog! Please install it in the PATH."))))
 
 (defn message
@@ -137,9 +135,12 @@
    Args:
    - `title`: The title text of the dialog
    - `body`: The body text of the dialog
-   - `choices`: A list of options. Each item in the list should be a vector of 3 elements: the choice value itself, a string description,
-     and a boolean indicating whether the option is toggled or not. Note that since only one choice can be selected at the same time,
-     `dialog` will ignore the toggled state of all but the first toggled item in the list.
+
+   - `choices`: A list of options. Each item in the list should be a vector of 3
+      elements: the choice value itself, a string description, and a boolean
+      indicating whether the option is toggled or not. Note that since only one
+      choice can be selected at the same time, `dialog` will ignore the toggled
+      state of all but the first toggled item in the list.
 
      By default, the values are assumed to be keywords, and the function returns a seq of keywords, but you can customize this behavior with
      optional keyword arguments:
@@ -156,73 +157,22 @@
             not-empty
             out-fn)))
 
-;; dialog --clear --fselect ~/ 50 10
-;; dialog --clear --gauge hello 10 100 32
-;; dialog --timebox hello 0 0
+;; treeview
 
-;; dialog --treeview hello 0 0 0 a alpha on 0 b beta on 1 b beta on 1 g gamma on 0
-
-(def tt
-  [[:a "alpha" :on
-    [:b "beta" :off]
-    [:c "gamma" :on
-     [:c1 "gamma1" :on]
-     [:c2 "gamma2" :on]]
-    [:d "delta" :on
-     [:d1 "delta1" :on]
-     [:d2 "delta2" :on]
-     [:d3 "delta3" :on]]]
-   [:z "zed" :on]])
-
-(def tt2
-  [[:a "alpha"
-    [:b "beta"]
-    [:c "gamma" :on
-     [:c1 "gamma1"]
-     [:c2 "gamma2"]]
-    [:d "delta"
-     [:d1 "delta1"]
-     [:d2 "delta2"]
-     [:d3 "delta3"]]]
-   [:e "epsilon"
-    [:z "zeta" :on]
-    [:h "eta" :on]]])
-
-(defn- tv-branch? [x]
-  (and (vector? x)
-       (keyword? (first x))))
-
-(defn- tv-depth [loc]
-  (count (filter tv-branch? (z/path loc))))
-
-
-(defn- tv-flatten-tree [tree]
-  (loop [res   []
-         loc   (z/vector-zip tree)]
-    (let [n (z/node loc)]
-      (cond (z/end? loc)   res
-            (tv-branch? n) (let [[tag item status] n]
-                             (recur (apply conj res
-                                           (if (keyword? status)
-                                             [(name tag) item (name status) (str (tv-depth loc))]
-                                             [(name tag) item "off" (str (tv-depth loc))]))
-                                    (z/next loc)))
-            :else          (recur res (z/next loc))))))
-
-(defn- parse-tree [depth tree]
+(defn- tv-parse-tree [depth tree]
   (let [[[tag item status] children] (split-with (complement vector?) tree)]
     {:tag      tag
      :item     item
      :status   (or status :off)
      :depth    depth
      ;; don't increment depth for tagless nodes, containing sibling subtrees
-     :children (map (partial parse-tree (+ depth (if tag 1 0))) children)}))
+     :children (map (partial tv-parse-tree (+ depth (if tag 1 0))) children)}))
 
-(defn- marshal-tree [{:keys [tag item status depth children]}]
-  (cond->> (mapcat marshal-tree children)
-    tag (concat [(name tag) item (name status) (str depth)])))
+(defn- tv-marshal-tree [{:keys [tag item status depth children]} in-fn]
+  (cond->> (mapcat #(tv-marshal-tree % in-fn) children)
+    tag (concat [(in-fn tag) item (name status) (str depth)])))
 
-(defn- tv-flatten-tree-2 [tree] (marshal-tree (parse-tree 0 tree)))
+(defn- tv-flatten-tree [tree in-fn] (tv-marshal-tree (tv-parse-tree 0 tree) in-fn))
 
 (defn treeview
   "Calls a `--treeview` dialog, and returns the selected option as a keyword.
@@ -249,6 +199,35 @@
   `:on` has any effect. The `:on`/`:off` keywords are optional (`:off` is
   implied if absent).
 
-  Returns: keyword, or nil if the user selects cancel"
-  [body tree]
-  (some-> (apply dialog "--treeview" nil body (cons 0 (tv-flatten-tree tree))) :err not-empty keyword))
+  By default, the tags of the nodes of the tree are assumed to be keywords, and
+  the function returns the selected keyword, but you can customize this behavior
+  with optional keyword arguments:
+
+   - `:in-fn`: a function that will be applied to convert each tag to a string
+     for use by `dialog`
+
+   - `:out-fn`: a function that will be applied to the selected string option
+     returned by `dialog`, to convert it back into a Clojure value
+
+  Here's an example of how to use integers as tags:
+
+  ```
+  (treeview
+   \"Pick one\"
+   [[1 \"alpha\"
+     [11 \"beta\"]
+     [12 \"gamma\" :on
+      [121 \"gamma1\"]
+      [122 \"gamma2\"]]
+     [13 \"delta\"
+      [131 \"delta1\"]
+      [132 \"delta2\"]
+      [133 \"delta3\"]]]]
+   :in-fn str
+   :out-fn #(Integer/parseInt %))
+  ```
+
+  Returns: keyword (or results of `out-fn`), or nil if the user selects cancel"
+  [body tree & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
+  (prn (tv-flatten-tree tree in-fn) in-fn out-fn)
+  (some-> (apply dialog "--treeview" nil body (cons 0 (tv-flatten-tree tree in-fn))) :err not-empty out-fn))
