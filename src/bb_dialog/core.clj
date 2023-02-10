@@ -1,7 +1,8 @@
 (ns bb-dialog.core
   (:require [babashka.process :refer [shell]]
             [babashka.fs :refer [which]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.zip :as z]))
 
 (def ^:dynamic *dialog-command*
   "A var which attempts to contain the correct version of `dialog` for the system. Given that this could potentially fail,
@@ -134,9 +135,12 @@
    Args:
    - `title`: The title text of the dialog
    - `body`: The body text of the dialog
-   - `choices`: A list of options. Each item in the list should be a vector of 3 elements: the choice value itself, a string description,
-     and a boolean indicating whether the option is toggled or not. Note that since only one choice can be selected at the same time,
-     `dialog` will ignore the toggled state of all but the first toggled item in the list.
+
+   - `choices`: A list of options. Each item in the list should be a vector of 3
+      elements: the choice value itself, a string description, and a boolean
+      indicating whether the option is toggled or not. Note that since only one
+      choice can be selected at the same time, `dialog` will ignore the toggled
+      state of all but the first toggled item in the list.
 
      By default, the values are assumed to be keywords, and the function returns a seq of keywords, but you can customize this behavior with
      optional keyword arguments:
@@ -152,3 +156,78 @@
             :err
             not-empty
             out-fn)))
+
+;; treeview
+
+(defn- tv-parse-tree [depth tree]
+  (let [[[tag item status] children] (split-with (complement vector?) tree)]
+    {:tag      tag
+     :item     item
+     :status   (or status :off)
+     :depth    depth
+     ;; don't increment depth for tagless nodes, containing sibling subtrees
+     :children (map (partial tv-parse-tree (+ depth (if tag 1 0))) children)}))
+
+(defn- tv-marshal-tree [{:keys [tag item status depth children]} in-fn]
+  (cond->> (mapcat #(tv-marshal-tree % in-fn) children)
+    tag (concat [(in-fn tag) item (name status) (str depth)])))
+
+(defn- tv-flatten-tree [tree in-fn] (tv-marshal-tree (tv-parse-tree 0 tree) in-fn))
+
+(defn treeview
+  "Calls a `--treeview` dialog, and returns the selected option as a keyword.
+
+  Args:
+  - `body`: The text shown in the dialog
+  - `tree`: A structure of nested vectors describing the available options
+
+  The tree should look like so:
+
+  ```
+  [:a \"alpha\"
+   [:b \"beta\"]
+   [:c \"gamma\" :on
+    [:c1 \"gamma1\"]
+    [:c2 \"gamma2\"]]
+   [:d \"delta\" :off
+    [:d1 \"delta1\"]
+    [:d2 \"delta2\"]
+    [:d3 \"delta3\"]]]
+  ```
+
+  The `:on` keyword defines which option is preselected - only the first
+  `:on` has any effect. The `:on`/`:off` keywords are optional (`:off` is
+  implied if absent).
+
+  By default, the tags of the nodes of the tree are assumed to be keywords, and
+  the function returns the selected keyword, but you can customize this behavior
+  with optional keyword arguments:
+
+   - `:in-fn`: a function that will be applied to convert each tag to a string
+     for use by `dialog`
+
+   - `:out-fn`: a function that will be applied to the selected string option
+     returned by `dialog`, to convert it back into a Clojure value
+
+  Here's an example of how to use integers as tags:
+
+  ```
+  (treeview
+   \"Pick one\"
+   [[1 \"alpha\"
+     [11 \"beta\"]
+     [12 \"gamma\" :on
+      [121 \"gamma1\"]
+      [122 \"gamma2\"]]
+     [13 \"delta\"
+      [131 \"delta1\"]
+      [132 \"delta2\"]
+      [133 \"delta3\"]]]]
+   :in-fn str
+   :out-fn #(Integer/parseInt %))
+  ```
+
+  Returns: keyword (or results of `out-fn`), or nil if the user selects cancel"
+  [body tree & {:keys [in-fn out-fn] :or {in-fn name out-fn keyword}}]
+  (prn (tv-flatten-tree tree in-fn) in-fn out-fn)
+  (some-> (apply dialog "--treeview" nil body (cons 0 (tv-flatten-tree tree in-fn))) :err not-empty out-fn))
