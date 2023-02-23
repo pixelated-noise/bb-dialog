@@ -26,7 +26,7 @@ A var which attempts to contain the correct version of `dialog` for the
    system. Given that this could potentially fail, and can't necessarily foresee
    all possibilities, the var is dynamic to allow rebinding by the end user.
 
-## <a name="bb-dialog.core/checklist">`checklist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L125-L151)
+## <a name="bb-dialog.core/checklist">`checklist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L125-L153)
 <a name="bb-dialog.core/checklist"></a>
 ``` clojure
 
@@ -51,7 +51,9 @@ Calls a `--checklist` dialog, and returns the selected options as a seq of
    - `:in-fn`: a function that will be applied to convert each key to a string
      for use by `dialog`
    - `:out-fn`: a function that will be applied to each string option selected
-     and returned by `dialog`, to convert it back into a Clojure value
+     and returned by `dialog`, to convert it back into a Clojure value. If you
+     define `str` for this, you could use strings for the choices and `nil`s
+     for the descriptions.
 
    Returns: seq of keywords (or results of `out-fn`), or nil if the user selects
    cancel or selects no choices.
@@ -179,7 +181,7 @@ Calls a confirmation dialog with a timeout (`dialog --pause`). Unless
 
    Returns: boolean
 
-## <a name="bb-dialog.core/radiolist">`radiolist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L153-L181)
+## <a name="bb-dialog.core/radiolist">`radiolist`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L155-L183)
 <a name="bb-dialog.core/radiolist"></a>
 ``` clojure
 
@@ -209,7 +211,7 @@ Calls a `--radiolist` dialog, and returns the selected option as a keyword.
 
    Returns: keyword (or results of `out-fn`), or nil if the user selects cancel.
 
-## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L200-L256)
+## <a name="bb-dialog.core/treeview">`treeview`</a> [📃](https://github.com/pixelated-noise/bb-dialog/blob/main/src/bb_dialog/core.clj#L202-L258)
 <a name="bb-dialog.core/treeview"></a>
 ``` clojure
 

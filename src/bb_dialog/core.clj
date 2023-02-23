@@ -140,7 +140,9 @@
    - `:in-fn`: a function that will be applied to convert each key to a string
      for use by `dialog`
    - `:out-fn`: a function that will be applied to each string option selected
-     and returned by `dialog`, to convert it back into a Clojure value
+     and returned by `dialog`, to convert it back into a Clojure value. If you
+     define `str` for this, you could use strings for the choices and `nil`s
+     for the descriptions.
 
    Returns: seq of keywords (or results of `out-fn`), or nil if the user selects
    cancel or selects no choices."
