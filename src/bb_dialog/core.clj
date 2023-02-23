@@ -1,5 +1,5 @@
 (ns bb-dialog.core
-  (:require [babashka.process :refer [shell]]
+  (:require [babashka.process :refer [shell tokenize]]
             [babashka.fs :refer [which]]
             [clojure.string :as str]
             [clojure.zip :as z]))
@@ -148,7 +148,7 @@
   (let [as-list (mapcat (fn [[k d s]] [(in-fn k) d (if s "ON" "off")]) choices)
         result  (apply command "--checklist" title body (count choices) as-list)]
     (when-let [err (not-empty (:err result))]
-      (map out-fn (str/split err #" ")))))
+      (map out-fn (tokenize err)))))
 
 (defn radiolist
   "Calls a `--radiolist` dialog, and returns the selected option as a keyword.
