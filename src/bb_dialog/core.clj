@@ -1,8 +1,7 @@
 (ns bb-dialog.core
   (:require [babashka.process :refer [shell tokenize]]
             [babashka.fs :refer [which]]
-            [clojure.string :as str]
-            [clojure.zip :as z]))
+            [clojure.string :as str]))
 
 (def ^:dynamic *dialog-command*
   "A var which attempts to contain the correct version of `dialog` for the
@@ -91,6 +90,22 @@
   (-> (command "--inputbox" title body)
       :err
       not-empty))
+
+(defn calendar
+  "Calls an `--calendar` dialog, and returns the user selected date as a string.
+
+  Args:
+  - `title`: The title text of the dialog
+  - `body`: The body text of the dialog
+  - `year`: The starting year of the calendar [YYYY] (optional)
+  - `month`: The starting month of the calendar [MM] (optional)
+  - `day`: The starting day of the calendar     [dd] (optional)
+
+  Returns: string (dd/mm/yyyy), or nil if the user selected cancel"
+  ([title body & [year month day]]
+   (-> (command "--calendar" title body day month year)
+       :err
+       not-empty)))
 
 (defn menu
   "Calls a `--menu` dialog, and returns the selected option as a keyword.
