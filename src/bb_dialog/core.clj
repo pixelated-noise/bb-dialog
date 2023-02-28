@@ -100,16 +100,12 @@
   Args:
   - `title`: The title text of the dialog
   - `body`: The body text of the dialog
-  - `day`: The starting day of the calendar
-  - `month`: The starting month of the calendar
-  - `year`: The starting year of the calendar
+  - `year`: The starting year of the calendar [YYYY] (optional)
+  - `month`: The starting month of the calendar [MM] (optional)
+  - `day`: The starting day of the calendar     [dd] (optional)
 
   Returns: string (dd/mm/yyyy), or nil if the user selected cancel"
-  ([title body]
-   (-> (command "--calendar" title body)
-       :err
-       not-empty))
-  ([title body day month year]
+  ([title body & [year month day]]
    (-> (command "--calendar" title body day month year)
        :err
        not-empty)))
