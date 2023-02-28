@@ -92,7 +92,7 @@
       not-empty))
 
 (defn calendar
-  "Calls an `--calendar` dialog, and returns the user selected date as a string.
+  "Calls a `--calendar` dialog, and returns the selected date as a string.
 
   Args:
   - `title`: The title text of the dialog
